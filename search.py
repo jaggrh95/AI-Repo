@@ -181,8 +181,7 @@ def uniformCostSearch(problem):
                 if nextpos not in explored:
                     "add direction directions to this node and push this to the Q"
                     Queue.update((nextpos, directions + [i[1]]),problem.getCostOfActions(directions + [i[1]]))
-                
-        
+                  
     "We exit when goal state is reached, that means last position was goal and the last set of directions are okay"
     return directions
 

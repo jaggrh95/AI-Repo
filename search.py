@@ -152,9 +152,6 @@ def breadthFirstSearch(problem):
     return directions
 
 def uniformCostSearch(problem):
-    "get start state and save start state as current state"
-    currentstate = problem.getStartState()
-    "make explored list and add start to it"
     explored = []
     "create our stack"
     Queue = util.PriorityQueue()

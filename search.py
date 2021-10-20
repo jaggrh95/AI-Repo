@@ -155,7 +155,7 @@ def uniformCostSearch(problem):
     "get start state and save start state as current state"
     currentstate = problem.getStartState()
     "make explored list and add start to it"
-    explored = [problem.getStartState()]
+    explored = []
     "create our stack"
     Queue = util.PriorityQueue()
     
@@ -165,28 +165,27 @@ def uniformCostSearch(problem):
     tuplehold = (problem.getStartState(), [])
     Queue.push(tuplehold,0)
     directions = []
-    while not problem.isGoalState(currentstate):
+    while not Queue.isEmpty():
         "Get top state from Q and add it to paths list, also change current state"
         "also take the path associated to this node"
         cState, directions = Queue.pop()
         if problem.isGoalState(cState):
             return directions 
        
-        "get next possible nodes from current state"
-        next = problem.getSuccessors(cState)
         "check for each leaf of this node is this leaf has been explored yet"
-        for i in next:
-            "check first element (location) of next options and see if it has been visited yet"
-            nextpos = i[0]
-            if not nextpos in explored:
-                explored.append(nextpos)
-                "add direction directions to this node and push this to the Q"
-                if problem.isGoalState(nextpos):
-                    return directions + [i[1]]
-                Queue.push((nextpos, directions + [i[1]]),problem.getCostOfActions(directions + [i[1]]))
+        if cState not in explored:
+            "add current working state to explored list"
+            explored.append(cState)
+            "get next possible nodes from current state"
+            next = problem.getSuccessors(cState)
+            for i in next:
+                "check first element (location) of next options and see if it has been visited yet"
+                nextpos = i[0]
+                if nextpos not in explored:
+                    "add direction directions to this node and push this to the Q"
+                    Queue.update((nextpos, directions + [i[1]]),problem.getCostOfActions(directions + [i[1]]))
                 
-        "add current working state to explored list"
-        explored.append(cState)
+        
     "We exit when goal state is reached, that means last position was goal and the last set of directions are okay"
     return directions
 

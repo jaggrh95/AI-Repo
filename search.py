@@ -193,9 +193,38 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    explored = []
+    "create our stack"
+    Queue = util.PriorityQueue()
+    
+    "check type of data -> tuple"
+    print("TYPE OF ---------------------:",type(problem.getStartState()))
+    "temporary tuple to push to stack"
+    tuplehold = (problem.getStartState(), [])
+    Queue.push(tuplehold,0)
+    directions = []
+    while not Queue.isEmpty():
+        "Get top state from Q and add it to paths list, also change current state"
+        "also take the path associated to this node"
+        cState, directions = Queue.pop()
+        if problem.isGoalState(cState):
+            return directions 
+       
+        "check for each leaf of this node is this leaf has been explored yet"
+        if cState not in explored:
+            "add current working state to explored list"
+            explored.append(cState)
+            "get next possible nodes from current state"
+            next = problem.getSuccessors(cState)
+            for i in next:
+                "check first element (location) of next options and see if it has been visited yet"
+                nextpos = i[0]
+                if nextpos not in explored:
+                    "add direction directions to this node and push this to the Q"
+                    Queue.update((nextpos, directions + [i[1]]),problem.getCostOfActions(directions + [i[1]]) + heuristic(nextpos,problem))
+                  
+    "We exit when goal state is reached, that means last position was goal and the last set of directions are okay"
+    return directions
 
 
 # Abbreviations

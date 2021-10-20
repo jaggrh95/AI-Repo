@@ -171,8 +171,7 @@ def uniformCostSearch(problem):
         cState, directions = Queue.pop()
         if problem.isGoalState(cState):
             return directions 
-        "add current working state to explored list"
-        explored.append(cState)
+       
         "get next possible nodes from current state"
         next = problem.getSuccessors(cState)
         "check for each leaf of this node is this leaf has been explored yet"
@@ -182,7 +181,12 @@ def uniformCostSearch(problem):
             if not nextpos in explored:
                 explored.append(nextpos)
                 "add direction directions to this node and push this to the Q"
+                if problem.isGoalState(nextpos):
+                    return directions + [i[1]]
                 Queue.push((nextpos, directions + [i[1]]),problem.getCostOfActions(directions + [i[1]]))
+                
+        "add current working state to explored list"
+        explored.append(cState)
     "We exit when goal state is reached, that means last position was goal and the last set of directions are okay"
     return directions
 

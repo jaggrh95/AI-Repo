@@ -295,7 +295,7 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "Return own startingposition and every corner being false"
+        "Return own startingposition and empty list"
         return (self.startingPosition,[])
 
     def isGoalState(self, state):
@@ -332,10 +332,11 @@ class CornersProblem(search.SearchProblem):
             "state[1] = the corners"
             "If he doesn't hit a wall with the next move, check wheter or not he's in a corner"
             if not hitsWall:
+                "get the visited corners from the state"
                 svc = list(state[1])
                 "if nextstate is in a corner"
                 if nextState in self.corners:
-                    "if nextstate hasn't been visited yet"
+                    "if nextstate hasn't been visited yet and is a corner -> add to state"
                     if nextState not in svc:
                         svc.append(nextState)
                 successor = ((nextState, svc), action, 1)
@@ -358,30 +359,27 @@ class CornersProblem(search.SearchProblem):
 
 
 def cornersHeuristic(state, problem):
-    """
-    A heuristic for the CornersProblem that you defined.
-
-      state:   The current search state
-               (a data structure you chose in your search problem)
-
-      problem: The CornersProblem instance for this layout.
-
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e.  it should be
-    admissible (as well as consistent).
-    """
-    ""
     corners = problem.corners # These are the corner coordinates
+
+    "never used walls, commented them out"
     "walls = problem.walls # These are the walls of the maze, as a Grid (game.py)"
-    
+
+
     uCorners = []
+    "get every corner that hasn't been visited yet"
     for i in corners:
         if not (i in state[1]):
             uCorners.append(i)
 
+    "calculate using mazedistance function for every unvisited corner"
+    "MANHATTEN WORKS TO BUT VISITS MORE NODES AND THEREFOR ONLY GIVE 2/3"
+    "add 0 to list to avoid empty list error"
     val=[]
-    for corner in uCorners:
-        val.append(manhattanDistance(state[0],corner))
+    val.append(0)
+    for i in uCorners:
+        "add value for every unvisited corner"
+        val.append(mazeDistance(state[0],i,problem.startingGameState))
+    "return highest value"
     return max(val)
 
 class AStarCornersAgent(SearchAgent):

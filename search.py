@@ -85,7 +85,6 @@ def depthFirstSearch(problem):
     stack = util.Stack()
 
     "check type of data -> tuple"
-    print("TYPE OF ---------------------:",type(problem.getStartState()))
 
     "temporary tuple to push to stack"
     tuplehold = (problem.getStartState(), [])
@@ -125,7 +124,6 @@ def breadthFirstSearch(problem):
     "create our stack"
     Queue = util.Queue()
     "check type of data -> tuple"
-    print("TYPE OF ---------------------:",type(problem.getStartState()))
     "temporary tuple to push to stack"
     tuplehold = (problem.getStartState(), [])
     Queue.push(tuplehold)
@@ -198,7 +196,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     Queue = util.PriorityQueue()
     
     "check type of data -> tuple"
-    print("TYPE OF ---------------------:",type(problem.getStartState()))
     "temporary tuple to push to stack"
     tuplehold = (problem.getStartState(), [])
     Queue.push(tuplehold,0)

@@ -288,8 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.right = right
-        self.top = top
+        self.startingGameState = startingGameState
 
     def getStartState(self):
         """
@@ -297,15 +296,18 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "Return own startingposition and every corner being false"
-        return (self.startingPosition,(False,False,False,False))
+        return (self.startingPosition,[])
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "return true if every corner has been visited"
-        return state[1][0] and state[1][1] and state[1][2] and state[1][3]
-        util.raiseNotDefined()
+        if state[0] in self.corners:
+            if not state[0] in state[1]:
+                state[1].append("True")
+            return len(state[1]) == 4
+        return False        
 
     def getSuccessors(self, state):
         """
@@ -322,6 +324,7 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
+            
             x,y = state[0]
             dx, dy = Actions.directionToVector(action)
             hitsWall = self.walls[int(x + dx)][int(y + dy)]
@@ -329,18 +332,14 @@ class CornersProblem(search.SearchProblem):
             "state[1] = the corners"
             "If he doesn't hit a wall with the next move, check wheter or not he's in a corner"
             if not hitsWall:
+                svc = list(state[1])
+                "if nextstate is in a corner"
                 if nextState in self.corners:
-                    if nextState == (1,1):
-                        successors.append(((nextState,[True,state[1][1],state[1][2],state[1][3]]),action,1))
-                    if nextState == (self.right,1):
-                        successors.append(((nextState,[state[1][0],True,state[1][2],state[1][3]]),action,1))
-                    if nextState == (self.right,self.top):
-                        successors.append(((nextState,[state[1][0],state[1][1],True,state[1][3]]),action,1))
-                    if nextState == (1,self.top):
-                        successors.append(((nextState,[state[1][0],state[1][1],state[1][2],True]),action,1))
-                else:
-                    successors.append(((nextState,state[1]),action,1))
-   
+                    "if nextstate hasn't been visited yet"
+                    if nextState not in svc:
+                        svc.append(nextState)
+                successor = ((nextState, svc), action, 1)
+                successors.append(successor)
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -371,28 +370,19 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+    ""
     corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
-    unvisitedcorn = []
+    "walls = problem.walls # These are the walls of the maze, as a Grid (game.py)"
+    
+    uCorners = []
     for i in corners:
-        "first corner"
-        if i == (1,1):
-            if state[1][0]:
-                unvisitedcorn.append(i)
-        if i == (walls.width-2,1):
-            if state[1][1]:
-                unvisitedcorn.append(i)
-        if i == (walls.width-2,walls.height-2):
-            if state[1][2]:
-                unvisitedcorn.append(i)
-        if i == (1,walls.height-2):
-            if state[1][3]:
-                unvisitedcorn.append(i)
-                
-   
+        if not (i in state[1]):
+            uCorners.append(i)
 
-    return 0
+    val=[]
+    for corner in uCorners:
+        val.append(manhattanDistance(state[0],corner))
+    return max(val)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

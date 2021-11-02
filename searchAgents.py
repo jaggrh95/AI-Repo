@@ -288,6 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        "set our startinggamestate as the given gamestate"
         self.startingGameState = startingGameState
 
     def getStartState(self):
@@ -295,7 +296,7 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "Return own startingposition and empty list"
+        "Return own startingposition and empty list, the list will contain all visited corners"
         return (self.startingPosition,[])
 
     def isGoalState(self, state):
@@ -310,36 +311,26 @@ class CornersProblem(search.SearchProblem):
         return False        
 
     def getSuccessors(self, state):
-        """
-        Returns successor states, the actions they require, and a cost of 1.
-
-         As noted in search.py:
-            For a given state, this should return a list of triples, (successor,
-            action, stepCost), where 'successor' is a successor to the current
-            state, 'action' is the action required to get there, and 'stepCost'
-            is the incremental cost of expanding to that successor
-        """
-
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
             
             x,y = state[0]
-            dx, dy = Actions.directionToVector(action)
-            hitsWall = self.walls[int(x + dx)][int(y + dy)]
-            nextState = (int(x + dx),int(y + dy))
+            directionX, directionY = Actions.directionToVector(action)
+            hitsWall = self.walls[int(x + directionX)][int(y + directionY)]
             "state[1] = the corners"
             "If he doesn't hit a wall with the next move, check wheter or not he's in a corner"
             if not hitsWall:
                 "get the visited corners from the state"
                 svc = list(state[1])
                 "if nextstate is in a corner"
-                if nextState in self.corners:
-                    "if nextstate hasn't been visited yet and is a corner -> add to state"
-                    if nextState not in svc:
-                        svc.append(nextState)
-                successor = ((nextState, svc), action, 1)
+                if (int(x + directionX),int(y + directionY)) in self.corners:
+                    "if nextstate hasn't been visited yet and is a corner -> add corner to state"
+                    if (int(x + directionX),int(y + directionY)) not in svc:
+                        svc.append((int(x + directionX),int(y + directionY)))
+                "add to succesor list: (next node + his visited corners), the actions to get there, and a value representing the problem number (doesn't really matter, just to avoid errors)"
+                successor = (((int(x + directionX),int(y + directionY)), svc), action,20)
                 successors.append(successor)
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -360,11 +351,6 @@ class CornersProblem(search.SearchProblem):
 
 def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
-
-    "never used walls, commented them out"
-    "walls = problem.walls # These are the walls of the maze, as a Grid (game.py)"
-
-
     uCorners = []
     "get every corner that hasn't been visited yet"
     for i in corners:

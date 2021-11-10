@@ -9,7 +9,17 @@ def create_image(options: Options) -> torch.Tensor:
     TODO: implement this method
     use options to put the tensor to the correct device.
     """
-    return not_implemented()
+    red_channel = [[0.5021, 0.2843, 0.1935], 
+                [0.8017, 0.5914, 0.7038]]
+    green_channel = [[0.1138, 0.0684, 0.5483],
+                 [0.8733, 0.6004, 0.5983]]
+    blue_channel = [[0.9047, 0.6829, 0.3117], 
+               [0.6258, 0.2893, 0.9914]]
+    rgb = [red_channel, green_channel, blue_channel]
+
+    image = torch.FloatTensor(rgb)
+    print(f"RGB image tensor: \n {image}, with shape:{image.shape}. \n")
+    return image
 
 
 def lin_layer_forward(weights: torch.Tensor, random_image: torch.Tensor) -> torch.Tensor:

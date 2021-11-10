@@ -5,4 +5,6 @@ import utilities.utils as utils
 
 def mse(input_tensor: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     """TODO: implement this method"""
-    return utils.not_implemented()
+    loss = torch.nn.MSELoss()
+    output = loss(input_tensor, target)
+    return output

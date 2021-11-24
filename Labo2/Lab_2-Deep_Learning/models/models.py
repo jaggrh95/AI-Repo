@@ -39,19 +39,24 @@ class Classifier(nn.Module):
             include the input and output as well).
         """
         self.layer1 = nn.Sequential(
-
+        nn.Linear(28,28),
+        nn.ReLU()
         )
         self.layer2 = nn.Sequential(
-
+        nn.Linear(28,28),
+        nn.ReLU()
         )
         self.layer3 = nn.Sequential(
-
+        nn.Linear(28,10),
+        nn.ReLU()
         )
         """END TODO"""
 
     def forward(self, x: torch.Tensor):
         """START TODO: forward tensor x through all layers."""
-
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
         """END TODO"""
         return x
 

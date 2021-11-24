@@ -1,4 +1,5 @@
 import torch
+from torch.optim import optimizer
 
 from datasets.mnist_dataset import MNISTDataset
 from models.models import Classifier, ClassifierVariableLayers
@@ -16,10 +17,13 @@ if __name__ == "__main__":
 
     """START TODO: fill in the missing parts"""
     # create a Classifier instance named model
-    model = None
+    model = Classifier()
+
     # define the opimizer
+    opt = torch.optim.sgd(model.parameters, lr=0.01)
 
     # train the model
+    train_classification_model(model,opt,dataset,options)
 
     """END TODO"""
 

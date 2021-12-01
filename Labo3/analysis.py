@@ -21,41 +21,55 @@
 
 def question2():
     answerDiscount = 0.9
-    answerNoise = 0.2
+    "No noise = guaranteed correct direction"
+    answerNoise = 0
     return answerDiscount, answerNoise
 
 def question3a():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+
+    "small discount to not look at future moves"
+    "no noise for faster exit -> risk cliff"
+    "Keep living reward negative to exit ASAP"
+    
+    answerDiscount = 0.1
+    answerNoise = 0
+    answerLivingReward = -1
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
 def question3b():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    "Choose the safe path to the close exit by increasing the discount (not to far so it doesn't go to second exit), giving a tiny noise and not penalizing the agent for living longer"
+    answerDiscount = 0.25
+    answerNoise = 0.01
+    answerLivingReward = 0
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
 def question3c():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    "We want to live long anough for the long exit"
+    "bigger discount so we look further to the future"
+    "no noise so we don't fail"
+    "living reward negative so we take the shortest path"
+    answerDiscount = 0.75
+    answerNoise = 0.0
+    answerLivingReward = -0.5
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
 def question3d():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    "same as B, but we look further to the future"
+    answerDiscount = 0.7
+    answerNoise = 0.3
+    answerLivingReward = 0
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
+
 def question3e():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    "Make reward for staying alive way higher than finishing, we don't need to look at the future"
+    answerDiscount = 0
+    answerNoise = 0
+    answerLivingReward = 100
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 

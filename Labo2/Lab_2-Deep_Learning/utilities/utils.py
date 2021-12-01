@@ -113,7 +113,6 @@ def train_classification_model(model: Classifier, optimizer: torch.optim.Optimiz
 
             # calculate the loss, use your previously defined criterion
             loss = criterion(x,y)
-            running_loss += loss
 
             # zero out all gradients
             optimizer.zero_grad()

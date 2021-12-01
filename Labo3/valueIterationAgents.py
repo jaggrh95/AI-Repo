@@ -77,6 +77,7 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+        self.mdp.getReward
         util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
@@ -89,7 +90,8 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        for actions in self.mdp.getPossibleActions(state):
+            util.raiseNotDefined()
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
@@ -126,10 +128,14 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
               mdp.getReward(state)
               mdp.isTerminal(state)
         """
+        self.mdp = mdp
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
+
+
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+        
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     """

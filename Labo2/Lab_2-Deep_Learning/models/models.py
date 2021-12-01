@@ -38,16 +38,17 @@ class Classifier(nn.Module):
             Use options.hidden_sizes to store all hidden sizes, (for simplicity, you might want to 
             include the input and output as well).
         """
+        "from 28*28 to 64 layers, from 64 to 32, from 32 to 10"
         self.layer1 = nn.Sequential(
-        nn.Linear(28,28),
+        nn.Linear(28*28,64),
         nn.ReLU()
         )
         self.layer2 = nn.Sequential(
-        nn.Linear(28,28),
+        nn.Linear(64,32),
         nn.ReLU()
         )
         self.layer3 = nn.Sequential(
-        nn.Linear(28,10),
+        nn.Linear(32,10),
         nn.ReLU()
         )
         """END TODO"""

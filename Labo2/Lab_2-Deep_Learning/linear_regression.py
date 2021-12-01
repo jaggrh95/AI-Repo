@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 
 from utilities import utils
 from datasets.houses_dataset import HousesDataset
-from models.models import LinearRegression
+import models.models
 from options.linear_regression_options import LinearRegressionOptions
 
 if __name__ == "__main__":
@@ -22,12 +22,12 @@ if __name__ == "__main__":
 
     """START TODO: fill in the missing parts as mentioned by the comments."""
     # create a LinearRegression instance named model
-    model = None
+    model = models.models.LinearRegression()
     # define the opimizer
     # (visit https://pytorch.org/docs/stable/optim.html?highlight=torch%20optim#module-torch.optim for more info)
-
+    optimizer = torch.optim.SGD(model.parameters(), options.lr, momentum=0.9)
     # train the model
-
+    utils.train_lin_model(model, optimizer, train_dataloader, options)
     """END TODO"""
 
     # test the model

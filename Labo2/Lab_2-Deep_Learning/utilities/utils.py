@@ -109,10 +109,20 @@ def train_classification_model(model: Classifier, optimizer: torch.optim.Optimiz
             # Note: x does not have the correct shape,
             # it should become (batch_size, -1), where the size -1 is inferred from other dimensions
             # (see TORCH.TENSOR.VIEW on the PyTorch documentation site)
-            model.forward(x)
+            "Transmute data to correct size"
+            x = x.view(-1,28*28)
+
+            "forward data through model"
+            x = model.forward(x)
+
+            "zet Y om met extra dimensie voor loss functie"
+            "NNS Loss geeft me NAN als resultaat in verloop van tijd en is dus niet correct"
+            
+            y_one_hot = torch.zeros(y.shape[0], 10)
+            y_one_hot.scatter_(1, torch.unsqueeze(y, dim=1), 1)
 
             # calculate the loss, use your previously defined criterion
-            loss = criterion(x,y)
+            loss = criterion(x,y_one_hot)
 
             # zero out all gradients
             optimizer.zero_grad()

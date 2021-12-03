@@ -17,10 +17,11 @@ if __name__ == "__main__":
 
     """START TODO: fill in the missing parts"""
     # create a Classifier instance named model
-    model = Classifier()
+    model = Classifier(options)
+    #model = ClassifierVariableLayers(options)
 
     # define the opimizer
-    opt = torch.optim.sgd(model.parameters, lr=0.01)
+    opt = torch.optim.SGD(model.parameters(), lr=0.1)
 
     # train the model
     train_classification_model(model,opt,dataset,options)

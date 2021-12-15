@@ -46,7 +46,7 @@ def question3b():
     # If not possible, return 'NOT POSSIBLE'
 
 def question3c():
-    "We want to live long anough for the long exit"
+    "We want to live long enough for the long exit"
     "bigger discount so we look further to the future"
     "no noise so we don't fail"
     "living reward negative so we take the shortest path"

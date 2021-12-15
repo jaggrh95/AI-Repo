@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5cc45c28-36e7-4c6c-a35f-f3ce9bf6d402" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/linear_regression.py" beforeDir="false" afterPath="$PROJECT_DIR$/linear_regression.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/losses/losses.py" beforeDir="false" afterPath="$PROJECT_DIR$/losses/losses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tensors.py" beforeDir="false" afterPath="$PROJECT_DIR$/tensors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utilities/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utilities/utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="5cc45c28-36e7-4c6c-a35f-f3ce9bf6d402" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

@@ -20,6 +20,6 @@ class Carlo(ABC):
     def calculate_move(self, board: chess.Board):
         pass
     def UCB1(CurrentCarlo : Carlo):
-        return (self.U/self.N) + 1.5 * math.sqrt(log(parent.N))
+        return (CurrentCarlo.U/CurrentCarlo.N) + 1.5 * math.sqrt(log(CurrentCarlo.parent))
     def selection():
         

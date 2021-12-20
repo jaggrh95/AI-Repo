@@ -12,6 +12,7 @@ import time
 
 
 
+
 """A generic agent class"""
 
 class Carlo():
@@ -26,6 +27,9 @@ class Carlo():
         self.ParentN = 0
         self.N = 0
         self.v = 0
+    
+    def perform(board : chess.Board, ):
+        pass
         
    
    
@@ -85,7 +89,7 @@ def backprop(CurrentCarlo: Carlo,reward):
         
         return CurrentCarlo
 
-def mcts_pred(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=2):
+def mcts_pred(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=50):
     if(GG):
         return -1
     all_moves = [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]
@@ -181,7 +185,7 @@ def play_stockfish():
             #move = white_player.calculate_move(board)
             root = Carlo()
             root.state = board
-            print(board)
+
             move = mcts_pred(root,board.is_game_over(),1)
             board.push_san(move)
             turn_white_player = False
@@ -189,7 +193,6 @@ def play_stockfish():
         else:
             # Stockfish plays a move
             move = black_player.play(board, limit).move
-            print(move)
             turn_white_player = True
             print("Black plays")
             board.push(move)

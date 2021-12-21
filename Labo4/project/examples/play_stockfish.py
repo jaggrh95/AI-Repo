@@ -22,7 +22,7 @@ class Carlo():
         self.name = "CarloBot"
         self.state = chess.Board()
         self.action = ''
-        self.children = set([])
+        self.children = []
         self.parent = None
         self.ParentN = 0
         self.N = 0
@@ -39,25 +39,12 @@ def UCB1(CurrentCarlo: Carlo):
 def expansion(CurrentCarlo : Carlo, white : bool):
     if(len(CurrentCarlo.children) == 0):
         return CurrentCarlo
-    
+    UCB = np.array([UCB1(xi) for xi in CurrentCarlo.children])
+
     if white:
-        highest = -69000000
-        car = None
-        for child in CurrentCarlo.children:
-            UCB = UCB1(child)
-            if(UCB > highest):
-                highest = UCB
-                car = child
-        return (expansion(car,0))
+        return (expansion(CurrentCarlo.children[np.argmax(UCB)],0))
     else:
-        highest = 69000000
-        car = None
-        for child in CurrentCarlo.children:
-            UCB = UCB1(child)
-            if(UCB < highest):
-                highest = UCB
-                car = child
-        return (expansion(car,1))
+        return (expansion(CurrentCarlo.children[np.argmin(UCB)],1))
 
 def calc(CurrentCarlo: Carlo):
     if(CurrentCarlo.state.is_game_over()):
@@ -76,7 +63,7 @@ def calc(CurrentCarlo: Carlo):
         Carlochild = Carlo()
         Carlochild.state = s
         Carlochild.parent = CurrentCarlo
-        CurrentCarlo.children.add(Carlochild)
+        CurrentCarlo.children.append(Carlochild)
     rnd = random.choice(list(CurrentCarlo.children))
     return calc(rnd)
 
@@ -89,22 +76,22 @@ def backprop(CurrentCarlo: Carlo,reward):
         
         return CurrentCarlo
 
-def mcts_pred(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=50):
+def mcts_pred(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):
     if(GG):
         return -1
     all_moves = [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]
     map_state_move = dict()
-    
     for i in all_moves:
         istate = chess.Board(CurrentCarlo.state.fen())
         istate.push_san(i)
         miniCarlo = Carlo()
         miniCarlo.state = istate
         miniCarlo.parent = CurrentCarlo
-        CurrentCarlo.children.add(miniCarlo)
+        CurrentCarlo.children.append(miniCarlo)
         map_state_move[miniCarlo] = i
     
     while(iterations>0):
+        print(iterations)
         if(white):  
             max_ucb = -69000000
             selectedCarlo = None

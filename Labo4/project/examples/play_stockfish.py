@@ -46,12 +46,6 @@ def expansion(CurrentCarlo : Carlo, white : bool):
     else:
         return (expansion(CurrentCarlo.children[np.argmin(UCB)],1))
 
-def getChild(s, ParentC):
-    C = Carlo()
-    C.state = s
-    C.parent = ParentC
-    return C
-
 def calc(CurrentCarlo: Carlo):
     if(CurrentCarlo.state.is_game_over()):
         b = CurrentCarlo.state
@@ -61,10 +55,15 @@ def calc(CurrentCarlo: Carlo):
             return(-1,CurrentCarlo)
         else:
             return(0.5,CurrentCarlo)
-    
-    moves = [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]
-    s = chess.Board(CurrentCarlo.state.fen())  
-    CurrentCarlo.children.append(getChild(s.push_san(move),CurrentCarlo) for move in moves)
+
+    moves = [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]  
+    for i in moves:
+        s = chess.Board(CurrentCarlo.state.fen())
+        s.push_san(i)
+        Carlochild = Carlo()
+        Carlochild.state = s
+        Carlochild.parent = CurrentCarlo
+        CurrentCarlo.children.append(Carlochild)
     rnd = random.choice(list(CurrentCarlo.children))
     return calc(rnd)
 

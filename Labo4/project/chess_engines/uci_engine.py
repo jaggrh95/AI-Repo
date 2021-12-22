@@ -1,12 +1,12 @@
 import chess
-from project.chess_agents.agent import Agent
+from ..chess_agents.Carlo import *
 
 class UciEngine():
     
-    def __init__(self, name: str, author: str, agent: Agent) -> None:
+    def __init__(self, name: str, author: str, carlo: Carlo) -> None:
         self.name = name
         self.author = author
-        self.agent = agent
+        self.carlo = carlo
         
         
     def engine_operation(self):
@@ -25,7 +25,7 @@ class UciEngine():
                     for move in input_val[3::]:
                         board.push_uci(move)
                 elif input_val[0] == "go":
-                    print("bestmove {}".format(self.agent.calculate_move(board)))
+                    print("bestmove {}".format(mcts_pred(self.carlo,board.is_game_over(),1)))
 
             elif len(input_val) > 1:
                 if input_val[0] == "position" and \

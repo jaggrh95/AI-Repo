@@ -21,5 +21,4 @@ class Carlo(ABC):
         pass
     def UCB1(CurrentCarlo : Carlo):
         return (CurrentCarlo.U/CurrentCarlo.N) + 1.5 * math.sqrt(log(CurrentCarlo.parent))
-    def selection():
         

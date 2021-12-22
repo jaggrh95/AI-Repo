@@ -201,7 +201,6 @@ class ApproximateQAgent(PacmanQAgent):
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        #We need to calculate the difference from: Q' - Q
         newQ = reward + self.discount * self.getValue(nextState)
         #Get the Q-value from the current state
         Q = self.getQValue(state, action)
@@ -221,4 +220,5 @@ class ApproximateQAgent(PacmanQAgent):
         if self.episodesSoFar == self.numTraining:
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
+            print(self.weights.values())
             pass

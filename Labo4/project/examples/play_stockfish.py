@@ -10,7 +10,7 @@ import math
 import random
 import numpy as np
 import time
-import pandas as pd
+#import pandas as pd
 #import cython
 
 
@@ -29,17 +29,38 @@ class Carlo():
         self.v = 0 #times won
                
 
-def weightedRNDIndex():
-    #if white:
-    #    index = np.random.choice(values,len(values),A) #get weighted choice
-    #else:
-    #    index = np.random.choice(values,len(values),A.reverse)
-    return 1
-def UCB1(CurrentCarlo: Carlo):
-    if ((CurrentCarlo.ParentN)/(CurrentCarlo.N+0.00000000001) == 0):
-        return  CurrentCarlo.v/(CurrentCarlo.N + 0.000000001)
+def weightedRNDIndex(total, UCB : np.array,white):
+    A = []
+    Weights = []
+
+    if(np.all(UCB == UCB[0])):
+        return random.randint(0,len(UCB)-1)
+
+    print("UCB" + str(UCB))
+
+    for i in range(len(UCB)):
+        A.append(UCB[i])
+        Weights.append(UCB[i]/total)
+    
+    if white:
+        index =  np.random.choice(UCB,1,Weights)  #get weighted choice
     else:
-        return  CurrentCarlo.v/(CurrentCarlo.N + 0.000000001) + 1.2 * math.sqrt(math.log(CurrentCarlo.ParentN)/(CurrentCarlo.N+0.00000000001)) 
+        index = np.random.choice(UCB,1,Weights.reverse)
+    print(index)
+    if(len(A) > 1):
+        G = A.index(index[0])
+    else:
+        G = A
+    return G
+
+
+def UCB1(CurrentCarlo: Carlo):
+    if(CurrentCarlo.N == 0):
+            return 0
+    if ((CurrentCarlo.ParentN)/(CurrentCarlo.N) == 0):
+        return  CurrentCarlo.v/(CurrentCarlo.N )
+    else:
+        return  CurrentCarlo.v/(CurrentCarlo.N) + 1.5 * math.sqrt(math.log(CurrentCarlo.ParentN)/(CurrentCarlo.N)) 
      
    
 def expansion(CurrentCarlo : Carlo, white : bool, depthexp=10):
@@ -47,13 +68,11 @@ def expansion(CurrentCarlo : Carlo, white : bool, depthexp=10):
         return CurrentCarlo
     UCB = np.array([UCB1(xi) for xi in CurrentCarlo.children])
     Total = np.sum(UCB)
+    WeightedIndex = weightedRNDIndex(Total,UCB,white)
+    return (expansion(CurrentCarlo.children[int(WeightedIndex)], not white ,depthexp-0))
 
-    if white:
-        return (expansion(CurrentCarlo.children[np.argmax(UCB)],0,depthexp))
-    else:
-        return (expansion(CurrentCarlo.children[np.argmin(UCB)],1,depthexp))
 
-def calc(CurrentCarlo: Carlo, depthcalc = 10):
+def calc(CurrentCarlo: Carlo, depthcalc = 50):
     if(CurrentCarlo.state.is_game_over() or depthcalc == 0):
         b = CurrentCarlo.state
         if(b.result()=='1-0'):
@@ -71,20 +90,21 @@ def calc(CurrentCarlo: Carlo, depthcalc = 10):
         Carlochild.state = s
         Carlochild.parent = CurrentCarlo
         CurrentCarlo.children.append(Carlochild)
-    return calc( random.choice(list(CurrentCarlo.children)),depthcalc-1)
+    return calc(random.choice(list(CurrentCarlo.children)),depthcalc-1)
 
 def backprop(CurrentCarlo: Carlo,reward):
-        CurrentCarlo.N+=1
+        CurrentCarlo.N +=1
         if(reward == 1):
             CurrentCarlo.v+= reward
         while(CurrentCarlo.parent != None):
             CurrentCarlo.ParentN += 1
             CurrentCarlo = CurrentCarlo.parent
+            CurrentCarlo.N +=1
             if(reward == 1):
                 CurrentCarlo.v+= reward
         return CurrentCarlo
 
-def Monte(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):
+def Monte(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=100):
     if(GG):
         return -1
     moves = dict()
@@ -101,23 +121,20 @@ def Monte(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):
     while(iterations>0):
         print(iterations)
         UCB = np.array([UCB1(xi) for xi in CurrentCarlo.children])
-        
         if(white):  
             if(np.all(UCB == UCB[0])):
-                for i in range(len(UCB)):
-                    ExpandedCarlo = expansion(CurrentCarlo.children[i],0)
-                    reward,state = calc(ExpandedCarlo)
-                    CurrentCarlo = backprop(state,reward)
+                ExpandedCarlo = expansion(random.choice(CurrentCarlo.children),0)
+                reward,state = calc(ExpandedCarlo)
+                CurrentCarlo = backprop(state,reward)
             else:
                 ExpandedCarlo = expansion(CurrentCarlo.children[np.argmax(UCB)],0)
                 reward,state = calc(ExpandedCarlo)
                 CurrentCarlo = backprop(state,reward)
         else:
             if(np.all(UCB == UCB[0])):
-                for i in range(len(UCB)):
-                    ExpandedCarlo = expansion(CurrentCarlo.children[i],1)
-                    reward,state = calc(ExpandedCarlo)
-                    CurrentCarlo = backprop(state,reward)
+                ExpandedCarlo = expansion(random.choice(CurrentCarlo.children),1)
+                reward,state = calc(ExpandedCarlo)
+                CurrentCarlo = backprop(state,reward)
             else:
                 ExpandedCarlo = expansion(CurrentCarlo.children[np.argmin(UCB)],1)
                 reward,state = calc(ExpandedCarlo)
@@ -126,13 +143,18 @@ def Monte(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):
         iterations-=1
     Weight = list()
     for CarloChild in CurrentCarlo.children:
-        Weight.append(CarloChild.v / CarloChild.N)
+        if(CarloChild.N == 0 and CarloChild.v == 0):
+            Weight.append(0.0)
+        else:
+            Weight.append(CarloChild.v / (CarloChild.N))
+
+
     if(white):
-        if(np.all(UCB == UCB[0])):
+        if(Weight.count(Weight[0]) == len(Weight)):
             return moves[random.choice(CurrentCarlo.children)]
         return moves[CurrentCarlo.children[np.argmax(Weight)]]
     else:
-        if(np.all(UCB == UCB[0])):
+        if(Weight.count(Weight[0]) == len(Weight)):
             return moves[random.choice(CurrentCarlo.children)]
         return moves[CurrentCarlo.children[np.argmin(Weight)]]
 
@@ -175,6 +197,7 @@ def play_stockfish():
             move = Monte(root,board.is_game_over(),1)
             board.push_san(move)
             turn_white_player = False
+            print(move)
             print("White plays")
         else:
             # Stockfish plays a move

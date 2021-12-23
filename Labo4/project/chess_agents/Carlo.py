@@ -81,7 +81,6 @@ def backprop(CurrentCarlo: Carlo,reward):
         while(CurrentCarlo.parent != None):
             CurrentCarlo.ParentN += 1
             CurrentCarlo = CurrentCarlo.parent
-        
         return CurrentCarlo
 
 def mcts_pred(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):

@@ -2,6 +2,7 @@
 #from ..chess_utilities.example_utility import ExampleUtility
 #from ..chess_agents.example_agent import ExampleAgent
 #from ..chess_agents.Carlo import Carlo
+from typing import Dict
 import chess
 import chess.engine
 import chess.pgn
@@ -9,45 +10,51 @@ import math
 import random
 import numpy as np
 import time
+import pandas as pd
+#import cython
 
 
-
-
+TTable : dict()
 """A generic agent class"""
 
 class Carlo():
-
     def __init__(self) -> None:
         """Setup the Search Agent"""
-        self.name = "CarloBot"
         self.state = chess.Board()
         self.action = ''
         self.children = []
         self.parent = None
-        self.ParentN = 0
-        self.N = 0
-        self.v = 0
-    
-    def perform(board : chess.Board, ):
-        pass
-        
-   
-   
+        self.ParentN = 0 #times parent has been visited
+        self.N = 0 #times visited
+        self.v = 0 #times won
+               
+
+def weightedRNDIndex():
+    #if white:
+    #    index = np.random.choice(values,len(values),A) #get weighted choice
+    #else:
+    #    index = np.random.choice(values,len(values),A.reverse)
+    return 1
 def UCB1(CurrentCarlo: Carlo):
-        return  CurrentCarlo.v+2*(math.sqrt(math.log(CurrentCarlo.ParentN+math.e+(10**-6))/(CurrentCarlo.N+(10**-10))))
+    if ((CurrentCarlo.ParentN)/(CurrentCarlo.N+0.00000000001) == 0):
+        return  CurrentCarlo.v/(CurrentCarlo.N + 0.000000001)
+    else:
+        return  CurrentCarlo.v/(CurrentCarlo.N + 0.000000001) + 1.2 * math.sqrt(math.log(CurrentCarlo.ParentN)/(CurrentCarlo.N+0.00000000001)) 
+     
    
-def expansion(CurrentCarlo : Carlo, white : bool):
-    if(len(CurrentCarlo.children) == 0):
+def expansion(CurrentCarlo : Carlo, white : bool, depthexp=10):
+    if(len(CurrentCarlo.children) == 0 or depthexp == 0):
         return CurrentCarlo
     UCB = np.array([UCB1(xi) for xi in CurrentCarlo.children])
+    Total = np.sum(UCB)
 
     if white:
-        return (expansion(CurrentCarlo.children[np.argmax(UCB)],0))
+        return (expansion(CurrentCarlo.children[np.argmax(UCB)],0,depthexp))
     else:
-        return (expansion(CurrentCarlo.children[np.argmin(UCB)],1))
+        return (expansion(CurrentCarlo.children[np.argmin(UCB)],1,depthexp))
 
-def calc(CurrentCarlo: Carlo):
-    if(CurrentCarlo.state.is_game_over()):
+def calc(CurrentCarlo: Carlo, depthcalc = 10):
+    if(CurrentCarlo.state.is_game_over() or depthcalc == 0):
         b = CurrentCarlo.state
         if(b.result()=='1-0'):
             return (1,CurrentCarlo)
@@ -55,86 +62,79 @@ def calc(CurrentCarlo: Carlo):
             return(-1,CurrentCarlo)
         else:
             return(0.5,CurrentCarlo)
-
+    
     moves = [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]  
-    for i in moves:
+    for i in range(len(moves)):
         s = chess.Board(CurrentCarlo.state.fen())
-        s.push_san(i)
+        s.push_san(moves[i])
         Carlochild = Carlo()
         Carlochild.state = s
         Carlochild.parent = CurrentCarlo
         CurrentCarlo.children.append(Carlochild)
-    rnd = random.choice(list(CurrentCarlo.children))
-    return calc(rnd)
+    return calc( random.choice(list(CurrentCarlo.children)),depthcalc-1)
 
 def backprop(CurrentCarlo: Carlo,reward):
         CurrentCarlo.N+=1
-        CurrentCarlo.v+= reward
+        if(reward == 1):
+            CurrentCarlo.v+= reward
         while(CurrentCarlo.parent != None):
             CurrentCarlo.ParentN += 1
             CurrentCarlo = CurrentCarlo.parent
-        
+            if(reward == 1):
+                CurrentCarlo.v+= reward
         return CurrentCarlo
 
-def mcts_pred(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):
+def Monte(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=10):
     if(GG):
         return -1
-    all_moves = [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]
-    map_state_move = dict()
-    for i in all_moves:
+    moves = dict()
+    for i in [CurrentCarlo.state.san(i) for i in list(CurrentCarlo.state.legal_moves)]:
         istate = chess.Board(CurrentCarlo.state.fen())
         istate.push_san(i)
         miniCarlo = Carlo()
         miniCarlo.state = istate
         miniCarlo.parent = CurrentCarlo
         CurrentCarlo.children.append(miniCarlo)
-        map_state_move[miniCarlo] = i
+        moves[miniCarlo] = i
     
+
     while(iterations>0):
         print(iterations)
+        UCB = np.array([UCB1(xi) for xi in CurrentCarlo.children])
+        
         if(white):  
-            max_ucb = -69000000
-            selectedCarlo = None
-            for i in CurrentCarlo.children:
-                ucb = UCB1(i)
-                if(ucb>max_ucb):
-                    max_ucb = ucb
-                    selectedCarlo = i
-            ExpandedCarlo = expansion(selectedCarlo,0)
-            reward,state = calc(ExpandedCarlo)
-            CurrentCarlo = backprop(state,reward)
-            iterations-=1
-    else:
-        min_ucb = 69000000
-        selectedCarlo = None
-        for i in CurrentCarlo.children:
-            ucb = UCB1(i)
-            if(ucb<min_ucb):
-                min_ucb = ucb
-                selectedCarlo = i
-        ExpandedCarlo = expansion(selectedCarlo,1)
-        reward,state = calc(ExpandedCarlo)
-        CurrentCarlo = backprop(state,reward)
-        iterations-=1
-    if(white):
+            if(np.all(UCB == UCB[0])):
+                for i in range(len(UCB)):
+                    ExpandedCarlo = expansion(CurrentCarlo.children[i],0)
+                    reward,state = calc(ExpandedCarlo)
+                    CurrentCarlo = backprop(state,reward)
+            else:
+                ExpandedCarlo = expansion(CurrentCarlo.children[np.argmax(UCB)],0)
+                reward,state = calc(ExpandedCarlo)
+                CurrentCarlo = backprop(state,reward)
+        else:
+            if(np.all(UCB == UCB[0])):
+                for i in range(len(UCB)):
+                    ExpandedCarlo = expansion(CurrentCarlo.children[i],1)
+                    reward,state = calc(ExpandedCarlo)
+                    CurrentCarlo = backprop(state,reward)
+            else:
+                ExpandedCarlo = expansion(CurrentCarlo.children[np.argmin(UCB)],1)
+                reward,state = calc(ExpandedCarlo)
+                CurrentCarlo = backprop(state,reward)
             
-        max = -69000000
-        selected_move = ''
-        for i in (CurrentCarlo.children):
-            ucb = UCB1(i)
-            if(ucb>max):
-                max = ucb
-                selected_move = map_state_move[i]
-        return selected_move
+        iterations-=1
+    Weight = list()
+    for CarloChild in CurrentCarlo.children:
+        Weight.append(CarloChild.v / CarloChild.N)
+    if(white):
+        if(np.all(UCB == UCB[0])):
+            return moves[random.choice(CurrentCarlo.children)]
+        return moves[CurrentCarlo.children[np.argmax(Weight)]]
     else:
-        max = 69000000
-        selected_move = ''
-        for i in (CurrentCarlo.children):
-            ucb = UCB1(i)
-            if(ucb<max):
-                max = ucb
-                selected_move = map_state_move[i]
-        return selected_move       
+        if(np.all(UCB == UCB[0])):
+            return moves[random.choice(CurrentCarlo.children)]
+        return moves[CurrentCarlo.children[np.argmin(Weight)]]
 
      
 
@@ -159,10 +159,9 @@ def play_stockfish():
     # Determine the skill level of Stockfish:
     black_player.configure({"Skill Level": 1})
     limit = chess.engine.Limit(time=time_limit)
-
     running = True
     turn_white_player = True
-    
+
     # Game loop
     while running:
         move = None
@@ -173,7 +172,7 @@ def play_stockfish():
             root = Carlo()
             root.state = board
 
-            move = mcts_pred(root,board.is_game_over(),1)
+            move = Monte(root,board.is_game_over(),1)
             board.push_san(move)
             turn_white_player = False
             print("White plays")

@@ -3,14 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5cc45c28-36e7-4c6c-a35f-f3ce9bf6d402" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/options/linear_regression_options.py" beforeDir="false" afterPath="$PROJECT_DIR$/options/linear_regression_options.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tensors.py" beforeDir="false" afterPath="$PROJECT_DIR$/tensors.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Labo3/qlearningAgents.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Labo3/qlearningAgents.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Labo4/project/chess_agents/Carlo.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Labo4/project/chess_agents/Carlo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Labo4/project/chess_agents/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Labo4/project/chess_agents/agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Labo4/project/chess_agents/example_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Labo4/project/chess_agents/example_agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Labo4/project/chess_utilities/example_utility.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Labo4/project/chess_utilities/example_utility.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Labo4/project/examples/play_stockfish.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Labo4/project/examples/play_stockfish.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

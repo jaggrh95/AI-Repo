@@ -68,7 +68,7 @@ def expansion(CurrentCarlo : Carlo, white : bool, depthexp=100):
     return (expansion(CurrentCarlo.children[int(WeightedIndex)], not white ,depthexp-1))
 
 
-def calc(CurrentCarlo: Carlo, depthcalc = 80):
+def calc(CurrentCarlo: Carlo, depthcalc = 30):
     if(CurrentCarlo.state.is_game_over() or depthcalc == 0):
         b = CurrentCarlo.state
         if(b.result()=='1-0'):
@@ -110,10 +110,10 @@ def Monte(CurrentCarlo : Carlo ,GG : bool,white : bool,iterations=30):
         nr1 = str(i)[1]
         nr2 = str(i)[3]
         if(white):
-            if(int(nr1) > int(nr2) and (not chess.Board.is_capture(istate,i))):
+            if(int(nr1) > int(nr2) and int(nr1) <=4 and (not chess.Board.is_capture(istate,i))):
                 continue
         else:
-            if(int(nr1) < int(nr2) and (not chess.Board.is_capture(istate,i))):
+            if(int(nr1) < int(nr2) and int(nr1) >=4 (not chess.Board.is_capture(istate,i))):
                 continue
         istate.push_san(A)
         miniCarlo = Carlo()
